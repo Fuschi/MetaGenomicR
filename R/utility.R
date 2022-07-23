@@ -4,6 +4,14 @@ assert <- function (expr, error) {
   if (!expr) stop(error, call. = FALSE)
 }
 
+#--------------------------------------#
+#'@noRd
+'%ni%' <- function(x,y){!(x%in%y)}
+
+#--------------------------------------#
+#'@noRd
+is.empty <- function(x){ifelse(length(x)==0,TRUE,FALSE)}
+
 #' Expresses a square numeric matrix as a list of position indices and values
 #'
 #' @description
