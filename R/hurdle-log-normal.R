@@ -61,19 +61,42 @@ hlnorm.mle <- function(x, log=TRUE, warning.silent=TRUE){
 #'@importFrom truncnorm dtruncnorm
 #'
 #'@export
-dhlnorm <- function(x, phi, meanlog, sdlog){
+dlhnorm <- function(xi, phi, meanlog, sdlog){
 
 	#CHECK ARGUMENTS
 	if(phi<0 || phi>1) stop("phi must be in range [0,1]")
-	if(sdlog<0) stop("sdlog must be greater than 0")
+	if(sd<0) stop("sd must be greater than 0")
 
-	y <- (1-phi)*dtruncnorm(xi,a=0,mean=mean,sd=sd)
-	y[1] <- phi
+	ans <- (1-phi)*dtruncnorm(xi,a=0,b=Inf,mean=meanlog,sd=sdlog)
+	ans[y==0] <- phi
 
-	return(y)
+	return(ans)
 }
 
+#'@author Alessandro Fuschi
+#'
+#'@importFrom truncnorm qtruncnorm
+#'
+#'@export
+qhlnorm <- function(p, phi, meanlog, sdlog){
 
+  #CHECK ARGUMENTS
+  if(phi<0 || phi>1) stop("phi must be in range [0,1]")
+  if(sdlog<0) stop("sdlog must be greater than 0")
+
+  ans <- rep(NA_real_,length(p))
+  ans[p<=phi] <- 0
+
+  idx <- is.na(ans)
+  ans[idx]  <- qtruncnorm(p=(p[idx]-phi)/(1-phi), a=0, b=Inf,
+                          mean=meanlog, sd=sdlog)
+
+  ans <- exp(ans) - 1
+  ans[intersect(which(ans>0),which(ans<1))] <- 1
+  ans <- round(ans)
+
+  return(ans)
+}
 
 
 #'@author Alessandro Fuschi
